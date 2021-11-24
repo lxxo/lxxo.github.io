@@ -181,6 +181,102 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CH">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/24/%E8%8A%82%E6%B5%81%E4%B8%8E%E9%98%B2%E6%8A%96And%E6%BB%9A%E5%8A%A8%E6%9D%A1%E7%AF%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Li XiaoXu">
+      <meta itemprop="description" content="All those years' journey">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxxo.github.io">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/11/24/%E8%8A%82%E6%B5%81%E4%B8%8E%E9%98%B2%E6%8A%96And%E6%BB%9A%E5%8A%A8%E6%9D%A1%E7%AF%87/" class="post-title-link" itemprop="url">节流与防抖And滚动条篇</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-11-24 13:39:54 / Modified: 13:57:32" itemprop="dateCreated datePublished" datetime="2021-11-24T13:39:54+08:00">2021-11-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/vue-js/" itemprop="url" rel="index"><span itemprop="name">vue.js</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2021/11/24/%E8%8A%82%E6%B5%81%E4%B8%8E%E9%98%B2%E6%8A%96And%E6%BB%9A%E5%8A%A8%E6%9D%A1%E7%AF%87/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/11/24/%E8%8A%82%E6%B5%81%E4%B8%8E%E9%98%B2%E6%8A%96And%E6%BB%9A%E5%8A%A8%E6%9D%A1%E7%AF%87/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="节流"><a href="#节流" class="headerlink" title="节流"></a>节流</h2><blockquote>
+<p><code>interval</code> 时间参数ms 只认第一次触发并且在时间段内只触发这一次</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">throttle</span>(<span class="params">interval</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> last = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> now = +<span class="keyword">new</span> <span class="built_in">Date</span>();</span><br><span class="line">    <span class="keyword">if</span> (now - last &gt; interval) &#123;</span><br><span class="line">      last = now;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">&#x27;我是在interval时间段只触法第一次&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
+<h2 id="防抖-无优化"><a href="#防抖-无优化" class="headerlink" title="防抖(无优化)"></a>防抖(无优化)</h2><blockquote>
+<p><code>delay</code> 时间参数ms  什么时候用户停止执行这个函数并且只认这段时间执行的最后一次 </p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/11/24/%E8%8A%82%E6%B5%81%E4%B8%8E%E9%98%B2%E6%8A%96And%E6%BB%9A%E5%8A%A8%E6%9D%A1%E7%AF%87/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CH">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/23/qiankun%E5%BE%AE%E6%9C%8D%E5%8A%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -995,105 +1091,11 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CH">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/12/git%E4%BB%A3%E7%A0%81%E5%9B%9E%E9%80%80%EF%BD%9Cgit%E8%BF%BD%E6%BA%AF%E4%B8%80%E4%B8%AA%E6%8C%87%E5%AE%9A%E6%96%87%E4%BB%B6%E7%9A%84%E5%8E%86%E5%8F%B2%E4%BF%AE%E6%94%B9%E8%AE%B0%E5%BD%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Li XiaoXu">
-      <meta itemprop="description" content="All those years' journey">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="lxxo.github.io">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/11/12/git%E4%BB%A3%E7%A0%81%E5%9B%9E%E9%80%80%EF%BD%9Cgit%E8%BF%BD%E6%BA%AF%E4%B8%80%E4%B8%AA%E6%8C%87%E5%AE%9A%E6%96%87%E4%BB%B6%E7%9A%84%E5%8E%86%E5%8F%B2%E4%BF%AE%E6%94%B9%E8%AE%B0%E5%BD%95/" class="post-title-link" itemprop="url">git代码回退｜git追溯一个指定文件的历史修改记录</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-11-12 11:10:50 / Modified: 12:47:17" itemprop="dateCreated datePublished" datetime="2021-11-12T11:10:50+08:00">2021-11-12</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/git/" itemprop="url" rel="index"><span itemprop="name">git</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine: </span>
-    
-    <a title="valine" href="/2021/11/12/git%E4%BB%A3%E7%A0%81%E5%9B%9E%E9%80%80%EF%BD%9Cgit%E8%BF%BD%E6%BA%AF%E4%B8%80%E4%B8%AA%E6%8C%87%E5%AE%9A%E6%96%87%E4%BB%B6%E7%9A%84%E5%8E%86%E5%8F%B2%E4%BF%AE%E6%94%B9%E8%AE%B0%E5%BD%95/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/11/12/git%E4%BB%A3%E7%A0%81%E5%9B%9E%E9%80%80%EF%BD%9Cgit%E8%BF%BD%E6%BA%AF%E4%B8%80%E4%B8%AA%E6%8C%87%E5%AE%9A%E6%96%87%E4%BB%B6%E7%9A%84%E5%8E%86%E5%8F%B2%E4%BF%AE%E6%94%B9%E8%AE%B0%E5%BD%95/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="git-blame"><a href="#git-blame" class="headerlink" title="git blame"></a>git blame</h1><blockquote>
-<p><strong>git blame</strong> 用来追溯一个指定文件的历史修改记录。<strong>filename</strong> 是文件的名称：</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git blame filename</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>可以使用 <strong>-L</strong>  指定要查找文件的行数范围：</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git blame -L n1,n2 filename</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/11/12/git%E4%BB%A3%E7%A0%81%E5%9B%9E%E9%80%80%EF%BD%9Cgit%E8%BF%BD%E6%BA%AF%E4%B8%80%E4%B8%AA%E6%8C%87%E5%AE%9A%E6%96%87%E4%BB%B6%E7%9A%84%E5%8E%86%E5%8F%B2%E4%BF%AE%E6%94%B9%E8%AE%B0%E5%BD%95/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
 
 
 
@@ -1158,7 +1160,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
