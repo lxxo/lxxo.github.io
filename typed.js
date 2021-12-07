@@ -156,102 +156,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'reset',
 	    value: function reset() {
-	      var restart = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
-	
-	      clearInterval(this.timeout);
-	      this.replaceText('');
-	      if (this.cursor && this.cursor.parentNode) {
-	        this.cursor.parentNode.removeChild(this.cursor);
-	        this.cursor = null;
-	      }
-	      this.strPos = 0;
-	      this.arrayPos = 0;
-	      this.curLoop = 0;
-	      if (restart) {
-	        this.insertCursor();
-	        this.options.onReset(this);
-	        this.begin();
-	      }
-	    }
-	
-	    /**
-	     * Begins the typing animation
-	     * @private
-	     */
-	  }, {
-	    key: 'begin',
-	    value: function begin() {
-	      var _this = this;
-	
-	      this.typingComplete = false;
-	      this.shuffleStringsIfNeeded(this);
-	      this.insertCursor();
-	      if (this.bindInputFocusEvents) this.bindFocusEvents();
-	      this.timeout = setTimeout(function () {
-	        // Check if there is some text in the element, if yes start by backspacing the default message
-	        if (!_this.currentElContent || _this.currentElContent.length === 0) {
-	          _this.typewrite(_this.strings[_this.sequence[_this.arrayPos]], _this.strPos);
-	        } else {
-	          // Start typing
-	          _this.backspace(_this.currentElContent, _this.currentElContent.length);
-	        }
-	      }, this.startDelay);
-	    }
-	
-	    /**
-	     * Called for each character typed
-	     * @param {string} curString the current string in the strings array
-	     * @param {number} curStrPos the current position in the curString
-	     * @private
-	     */
-	  }, {
-	    key: 'typewrite',
-	    value: function typewrite(curString, curStrPos) {
-	      var _this2 = this;
-	
-	      if (this.fadeOut && this.el.classList.contains(this.fadeOutClass)) {
-	        this.el.classList.remove(this.fadeOutClass);
-	        if (this.cursor) this.cursor.classList.remove(this.fadeOutClass);
-	      }
-	
-	      var humanize = this.humanizer(this.typeSpeed);
-	      var numChars = 1;
-	
-	      if (this.pause.status === true) {
-	        this.setPauseStatus(curString, curStrPos, true);
-	        return;
-	      }
-	
-	      // contain typing function in a timeout humanize'd delay
-	      this.timeout = setTimeout(function () {
-	        // skip over any HTML chars
-	        curStrPos = _htmlParserJs.htmlParser.typeHtmlChars(curString, curStrPos, _this2);
-	
-	        var pauseTime = 0;
-	        var substr = curString.substr(curStrPos);
-	        // check for an escape character before a pause value
-	        // format: \^\d+ .. eg: ^1000 .. should be able to print the ^ too using ^^
-	        // single ^ are removed from string
-	        if (substr.charAt(0) === '^') {
-	          if (/^\^\d+/.test(substr)) {
-	            var skip = 1; // skip at least 1
-	            substr = /\d+/.exec(substr)[0];
-	            skip += substr.length;
-	            pauseTime = parseInt(substr);
-	            _this2.temporaryPause = true;
-	            _this2.options.onTypingPaused(_this2.arrayPos, _this2);
-	            // strip out the escape character and pause value so they're not printed
-	            curString = curString.substring(0, curStrPos) + curString.substring(curStrPos + skip);
-	            _this2.toggleBlinking(true);
-	          }
-	        }
-	
-	        // check for skip characters formatted as
-	        // "this is a `string to print NOW` ..."
-	        if (substr.charAt(0) === '`') {
-	          while (curString.substr(curStrPos + numChars).charAt(0) !== '`') {
-	            numChars++;
-	            if (curStrPos + numChars > curString.length) break;
+	      var restart = arguments.length <= 0 1 || arguments[0]="==" undefined ? true : arguments[0]; clearinterval(this.timeout); this.replacetext(''); if (this.cursor && this.cursor.parentnode) { this.cursor.parentnode.removechild(this.cursor); this.cursor="null;" } this.strpos="0;" this.arraypos="0;" this.curloop="0;" (restart) this.insertcursor(); this.options.onreset(this); this.begin(); ** * begins the typing animation @private }, key: 'begin', value: function begin() var _this="this;" this.typingcomplete="false;" this.shufflestringsifneeded(this); (this.bindinputfocusevents) this.bindfocusevents(); this.timeout="setTimeout(function" () check there is some text in element, yes start by backspacing default message (!_this.currentelcontent _this.currentelcontent.length="==" 0) _this.typewrite(_this.strings[_this.sequence[_this.arraypos]], _this.strpos); else _this.backspace(_this.currentelcontent, _this.currentelcontent.length); this.startdelay); called for each character typed @param {string} curstring current string strings array {number} curstrpos position 'typewrite', typewrite(curstring, curstrpos) _this2="this;" (this.fadeout this.el.classlist.contains(this.fadeoutclass)) this.el.classlist.remove(this.fadeoutclass); (this.cursor) this.cursor.classlist.remove(this.fadeoutclass); humanize="this.humanizer(this.typeSpeed);" numchars="1;" (this.pause.status="==" true) this.setpausestatus(curstring, curstrpos, true); return; contain a timeout humanize'd delay skip over any html chars _this2); pausetime="0;" substr="curString.substr(curStrPos);" an escape before pause value format: \^\d+ .. eg: ^1000 should be able to print ^ too using ^^ single are removed from (substr.charat(0)="==" '^') ( ^\^\d+ .test(substr)) at least +="substr.length;" _this2.temporarypause="true;" _this2.options.ontypingpaused(_this2.arraypos, strip out and so they're not printed curstring.substring(curstrpos skip); _this2.toggleblinking(true); characters formatted as "this `string now` ..." '`') while (curstring.substr(curstrpos numchars).charat(0) !="=" numchars++; (curstrpos> curString.length) break;
 	          }
 	          // strip out the escape characters and append all the string in between
 	          var stringBeforeSkip = curString.substring(0, curStrPos);
@@ -378,112 +283,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          curStrPos--;
 	          // loop the function
 	          _this4.backspace(curString, curStrPos);
-	        } else if (curStrPos <= _this4.stopNum) {
-	          // if the stop number has been reached, increase
-	          // array position to next string
-	          _this4.arrayPos++;
-	          // When looping, begin at the beginning after backspace complete
-	          if (_this4.arrayPos === _this4.strings.length) {
-	            _this4.arrayPos = 0;
-	            _this4.options.onLastStringBackspaced();
-	            _this4.shuffleStringsIfNeeded();
-	            _this4.begin();
-	          } else {
-	            _this4.typewrite(_this4.strings[_this4.sequence[_this4.arrayPos]], curStrPos);
-	          }
-	        }
-	        // humanized value for typing
-	      }, humanize);
-	    }
-	
-	    /**
-	     * Full animation is complete
-	     * @private
-	     */
-	  }, {
-	    key: 'complete',
-	    value: function complete() {
-	      this.options.onComplete(this);
-	      if (this.loop) {
-	        this.curLoop++;
-	      } else {
-	        this.typingComplete = true;
-	      }
-	    }
-	
-	    /**
-	     * Has the typing been stopped
-	     * @param {string} curString the current string in the strings array
-	     * @param {number} curStrPos the current position in the curString
-	     * @param {boolean} isTyping
-	     * @private
-	     */
-	  }, {
-	    key: 'setPauseStatus',
-	    value: function setPauseStatus(curString, curStrPos, isTyping) {
-	      this.pause.typewrite = isTyping;
-	      this.pause.curString = curString;
-	      this.pause.curStrPos = curStrPos;
-	    }
-	
-	    /**
-	     * Toggle the blinking cursor
-	     * @param {boolean} isBlinking
-	     * @private
-	     */
-	  }, {
-	    key: 'toggleBlinking',
-	    value: function toggleBlinking(isBlinking) {
-	      if (!this.cursor) return;
-	      // if in paused state, don't toggle blinking a 2nd time
-	      if (this.pause.status) return;
-	      if (this.cursorBlinking === isBlinking) return;
-	      this.cursorBlinking = isBlinking;
-	      var status = isBlinking ? 'infinite' : 0;
-	      this.cursor.style.animationIterationCount = status;
-	    }
-	
-	    /**
-	     * Speed in MS to type
-	     * @param {number} speed
-	     * @private
-	     */
-	  }, {
-	    key: 'humanizer',
-	    value: function humanizer(speed) {
-	      return Math.round(Math.random() * speed / 2) + speed;
-	    }
-	
-	    /**
-	     * Shuffle the sequence of the strings array
-	     * @private
-	     */
-	  }, {
-	    key: 'shuffleStringsIfNeeded',
-	    value: function shuffleStringsIfNeeded() {
-	      if (!this.shuffle) return;
-	      this.sequence = this.sequence.sort(function () {
-	        return Math.random() - 0.5;
-	      });
-	    }
-	
-	    /**
-	     * Adds a CSS class to fade out current string
-	     * @private
-	     */
-	  }, {
-	    key: 'initFadeOut',
-	    value: function initFadeOut() {
-	      var _this5 = this;
-	
-	      this.el.className += ' ' + this.fadeOutClass;
-	      if (this.cursor) this.cursor.className += ' ' + this.fadeOutClass;
-	      return setTimeout(function () {
-	        _this5.arrayPos++;
-	        _this5.replaceText('');
-	
-	        // Resets current string if end of loop reached
-	        if (_this5.strings.length > _this5.arrayPos) {
+	        } else if (curStrPos <= _this4.stopnum) { if the stop number has been reached, increase array position to next string _this4.arraypos++; when looping, begin at beginning after backspace complete (_this4.arraypos="==" _this4.strings.length) _this4.arraypos="0;" _this4.options.onlaststringbackspaced(); _this4.shufflestringsifneeded(); _this4.begin(); } else _this4.typewrite(_this4.strings[_this4.sequence[_this4.arraypos]], curstrpos); humanized value for typing }, humanize); ** * full animation is @private key: 'complete', value: function complete() this.options.oncomplete(this); (this.loop) this.curloop++; this.typingcomplete="true;" stopped @param {string} curstring current in strings {number} curstrpos {boolean} istyping 'setpausestatus', setpausestatus(curstring, curstrpos, istyping) this.pause.typewrite="isTyping;" this.pause.curstring="curString;" this.pause.curstrpos="curStrPos;" toggle blinking cursor isblinking 'toggleblinking', toggleblinking(isblinking) (!this.cursor) return; paused state, don't a 2nd time (this.pause.status) (this.cursorblinking="==" isblinking) this.cursorblinking="isBlinking;" var status="isBlinking" ? 'infinite' : 0; this.cursor.style.animationiterationcount="status;" speed ms type 'humanizer', humanizer(speed) return math.round(math.random() 2) + speed; shuffle sequence of 'shufflestringsifneeded', shufflestringsifneeded() (!this.shuffle) this.sequence="this.sequence.sort(function" () math.random() - 0.5; }); adds css class fade out 'initfadeout', initfadeout() _this5="this;" this.el.classname this.fadeoutclass; (this.cursor) this.cursor.classname settimeout(function _this5.arraypos++; _this5.replacetext(''); resets end loop reached (_this5.strings.length> _this5.arrayPos) {
 	          _this5.typewrite(_this5.strings[_this5.sequence[_this5.arrayPos]], 0);
 	        } else {
 	          _this5.typewrite(_this5.strings[0], 0);
@@ -989,16 +789,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function typeHtmlChars(curString, curStrPos, self) {
 	      if (self.contentType !== 'html') return curStrPos;
 	      var curChar = curString.substr(curStrPos).charAt(0);
-	      if (curChar === '<' || curChar === '&') {
-	        var endTag = '';
-	        if (curChar === '<') {
-	          endTag = '>';
-	        } else {
-	          endTag = ';';
-	        }
-	        while (curString.substr(curStrPos + 1).charAt(0) !== endTag) {
-	          curStrPos++;
-	          if (curStrPos + 1 > curString.length) {
+	      if (curChar === '<' 1 || curchar="==" '&') { var endtag ; if (curchar="==" '<') } else while (curstring.substr(curstrpos + 1).charat(0) !="=" endtag) curstrpos++; (curstrpos> curString.length) {
 	            break;
 	          }
 	        }
@@ -1023,30 +814,4 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (curChar === '>' || curChar === ';') {
 	        var endTag = '';
 	        if (curChar === '>') {
-	          endTag = '<';
-	        } else {
-	          endTag = '&';
-	        }
-	        while (curString.substr(curStrPos - 1).charAt(0) !== endTag) {
-	          curStrPos--;
-	          if (curStrPos < 0) {
-	            break;
-	          }
-	        }
-	        curStrPos--;
-	      }
-	      return curStrPos;
-	    }
-	  }]);
-	
-	  return HTMLParser;
-	})();
-	
-	exports['default'] = HTMLParser;
-	var htmlParser = new HTMLParser();
-	exports.htmlParser = htmlParser;
-
-/***/ })
-/******/ ])
-});
-;
+	          endTag = '</'></head></=></=></me@mattboldt.com>
