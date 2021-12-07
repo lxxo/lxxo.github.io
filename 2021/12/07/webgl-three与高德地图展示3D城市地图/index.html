@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CH">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"values":"mac","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="来吧展示   公司需求头段时间公司有了一个新的需求 是弄一个3D地图展示,我第一想到的就是three.js,众所周知threejs底层使用webgl封装,并且现在是非常成熟的技术,然而渲染模型简单但是去弄一些城市数据才是困难的,我问了以前公司的webgl工程时候,问以前的3D城市渲染的数据是怎么来的,他告诉我是天地图爬的,但是现在没有点手段是很难爬出来了!想到这里我心凉了半截。但是皇天不负有心人,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webgl-three与高德地图展示3D城市地图">
+<meta property="og:url" content="http://example.com/2021/12/07/webgl-three%E4%B8%8E%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E5%B1%95%E7%A4%BA3D%E5%9F%8E%E5%B8%82%E5%9C%B0%E5%9B%BE/index.html">
+<meta property="og:site_name" content="lxxo.github.io">
+<meta property="og:description" content="来吧展示   公司需求头段时间公司有了一个新的需求 是弄一个3D地图展示,我第一想到的就是three.js,众所周知threejs底层使用webgl封装,并且现在是非常成熟的技术,然而渲染模型简单但是去弄一些城市数据才是困难的,我问了以前公司的webgl工程时候,问以前的3D城市渲染的数据是怎么来的,他告诉我是天地图爬的,但是现在没有点手段是很难爬出来了!想到这里我心凉了半截。但是皇天不负有心人,">
+<meta property="og:locale" content="zh_CH">
+<meta property="og:image" content="http://example.com/2021/12/07/webgl-three%E4%B8%8E%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E5%B1%95%E7%A4%BA3D%E5%9F%8E%E5%B8%82%E5%9C%B0%E5%9B%BE/1.jpg">
+<meta property="og:image" content="http://example.com/2021/12/07/webgl-three%E4%B8%8E%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E5%B1%95%E7%A4%BA3D%E5%9F%8E%E5%B8%82%E5%9C%B0%E5%9B%BE/2.jpg">
+<meta property="article:published_time" content="2021-12-07T04:20:07.000Z">
+<meta property="article:modified_time" content="2021-12-07T05:15:36.121Z">
+<meta property="article:author" content="Li XiaoXu">
+<meta property="article:tag" content="webgl">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/12/07/webgl-three%E4%B8%8E%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E5%B1%95%E7%A4%BA3D%E5%9F%8E%E5%B8%82%E5%9C%B0%E5%9B%BE/1.jpg">
+
+<link rel="canonical" href="http://example.com/2021/12/07/webgl-three%E4%B8%8E%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E5%B1%95%E7%A4%BA3D%E5%9F%8E%E5%B8%82%E5%9C%B0%E5%9B%BE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CH'
+  };
+</script>
+
+  <title>webgl-three与高德地图展示3D城市地图 | lxxo.github.io</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">lxxo.github.io</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">我寻思着理想这玩意儿没啥用，就廉价卖给了生活。---《我在人间凑数的日子》</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="about fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="categories fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archives fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-guestbook">
+
+    <a href="/guestbook/" rel="section"><i class="guestbook fa-fw"></i>留言</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lxxo" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CH">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/07/webgl-three%E4%B8%8E%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E5%B1%95%E7%A4%BA3D%E5%9F%8E%E5%B8%82%E5%9C%B0%E5%9B%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Li XiaoXu">
+      <meta itemprop="description" content="All those years' journey">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxxo.github.io">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          webgl-three与高德地图展示3D城市地图
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-12-07 12:20:07 / Modified: 13:15:36" itemprop="dateCreated datePublished" datetime="2021-12-07T12:20:07+08:00">2021-12-07</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/webgl/" itemprop="url" rel="index"><span itemprop="name">webgl</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2021/12/07/webgl-three%E4%B8%8E%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E5%B1%95%E7%A4%BA3D%E5%9F%8E%E5%B8%82%E5%9C%B0%E5%9B%BE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/12/07/webgl-three%E4%B8%8E%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E5%B1%95%E7%A4%BA3D%E5%9F%8E%E5%B8%82%E5%9C%B0%E5%9B%BE/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="来吧展示"><a href="#来吧展示" class="headerlink" title="来吧展示"></a>来吧展示</h2><img src="/2021/12/07/webgl-three%E4%B8%8E%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E5%B1%95%E7%A4%BA3D%E5%9F%8E%E5%B8%82%E5%9C%B0%E5%9B%BE/1.jpg" class title="This is an demo1 image">
+<img src="/2021/12/07/webgl-three%E4%B8%8E%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E5%B1%95%E7%A4%BA3D%E5%9F%8E%E5%B8%82%E5%9C%B0%E5%9B%BE/2.jpg" class title="This is an demo2 image">
+
+<h2 id="公司需求"><a href="#公司需求" class="headerlink" title="公司需求"></a>公司需求</h2><p><code>头段时间公司有了一个新的需求 是弄一个3D地图展示,我第一想到的就是three.js,众所周知threejs底层使用webgl封装,并且现在是非常成熟的技术,然而渲染模型简单但是去弄一些城市数据才是困难的,我问了以前公司的webgl工程时候,问以前的3D城市渲染的数据是怎么来的,他告诉我是天地图爬的,但是现在没有点手段是很难爬出来了!想到这里我心凉了半截。但是皇天不负有心人,我终于找到了一个替代的方案.那就是-----高德地图</code></p>
+<h2 id="自定义地图篇"><a href="#自定义地图篇" class="headerlink" title="自定义地图篇"></a>自定义地图篇</h2><blockquote>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://geohub.amap.com/mapstyle/index">先来一个自定义地图-你想要的样子我都有</a></li>
+<li>修改完自定义地图样式后 记得右上角点击保存 然后右上角进行发布 你会得到一个高德专属你的样式地址(用地址就可以用你自定义的样式)</li>
+</ul>
+</blockquote>
+<h2 id="javascript-code"><a href="#javascript-code" class="headerlink" title="javascript code"></a>javascript code</h2><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!doctype <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;utf-8&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;X-UA-Compatible&quot;</span> <span class="attr">content</span>=<span class="string">&quot;IE=edge&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;initial-scale=1.0, user-scalable=no, width=device-width&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">title</span>&gt;</span>自定义地图<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="css"></span></span><br><span class="line"><span class="css">    *&#123; <span class="attribute">margin</span>: <span class="number">0</span>; <span class="attribute">padding</span>: <span class="number">0</span>; &#125;</span></span><br><span class="line"><span class="css">    <span class="selector-tag">html</span>,<span class="selector-tag">body</span>,<span class="selector-id">#container</span> &#123; <span class="attribute">width</span>: <span class="number">100%</span>; <span class="attribute">height</span>: <span class="number">100%</span>; &#125;</span></span><br><span class="line"><span class="css">    <span class="selector-class">.amap-logo</span>,<span class="selector-class">.amap-copyright</span> &#123; <span class="attribute">display</span>: none <span class="meta">!important</span>; &#125;</span></span><br><span class="line"><span class="css">    <span class="selector-class">.dialog</span>&#123;<span class="attribute">width</span>: <span class="number">500px</span>;<span class="attribute">height</span>: <span class="number">300px</span>;<span class="attribute">background</span>: <span class="built_in">rgba</span>(<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>, .<span class="number">5</span>);<span class="attribute">border</span>:<span class="number">2px</span> solid black;<span class="attribute">border-radius</span>: <span class="number">5px</span>;<span class="attribute">position</span>: absolute;<span class="attribute">top</span>:<span class="number">50%</span>;<span class="attribute">left</span>:-<span class="number">500px</span>;<span class="attribute">z-index</span>: <span class="number">10</span>;<span class="attribute">transform</span>: <span class="built_in">translate</span>(-<span class="number">50%</span>,-<span class="number">50%</span>);<span class="attribute">padding</span>: <span class="number">20px</span>;<span class="attribute">transition</span>: all .<span class="number">5s</span>;&#125;</span></span><br><span class="line"><span class="css">    <span class="selector-class">.cloce</span>&#123;<span class="attribute">position</span>: absolute;<span class="attribute">top</span>: <span class="number">5px</span>; <span class="attribute">right</span>: <span class="number">10px</span>;<span class="attribute">border-color</span>: white;<span class="attribute">background</span>: black;<span class="attribute">color</span>: white;&#125;</span></span><br><span class="line"><span class="css">  </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://webapi.amap.com/maps?v=2.0&amp;key=你的key&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;container&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;dialog&quot;</span>&gt;</span></span><br><span class="line">    marker and circle is show</span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&quot;Polygon()&quot;</span>&gt;</span>buildingLayer and Polygon<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">class</span>=<span class="string">&quot;cloce&quot;</span> <span class="attr">onClick</span>=<span class="string">&quot;closeDialog()&quot;</span>&gt;</span>关闭<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> map = <span class="keyword">new</span> AMap.Map(<span class="string">&#x27;container&#x27;</span>, &#123;</span></span><br><span class="line"><span class="javascript">      <span class="attr">mapStyle</span>: <span class="string">&#x27;自定义地图后获取的地址扔到这里(amap://styles/XXXXXXX)&#x27;</span>,</span></span><br><span class="line"><span class="javascript">      <span class="attr">resizeEnable</span>: <span class="literal">true</span>,</span></span><br><span class="line"><span class="javascript">      <span class="attr">pitch</span>: <span class="number">50</span>, <span class="comment">// 相机角度</span></span></span><br><span class="line"><span class="javascript">      <span class="attr">rotation</span>: <span class="number">25</span>, <span class="comment">// 相机旋转角度</span></span></span><br><span class="line"><span class="javascript">      <span class="attr">viewMode</span>: <span class="string">&#x27;3D&#x27;</span>,<span class="comment">//开启3D视图,默认为关闭</span></span></span><br><span class="line"><span class="javascript">      <span class="attr">zooms</span>: [<span class="number">12</span>, <span class="number">19</span>], <span class="comment">// 区间</span></span></span><br><span class="line"><span class="javascript">      <span class="attr">center</span>: [<span class="number">116.474609</span>,<span class="number">39.993478</span>], <span class="comment">// 中心点</span></span></span><br><span class="line"><span class="javascript">      <span class="attr">zoom</span>: <span class="number">16.8</span> <span class="comment">// 显示级</span></span></span><br><span class="line"><span class="javascript">    &#125;);</span></span><br><span class="line"><span class="javascript">    </span></span><br><span class="line"><span class="javascript">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">      <span class="built_in">console</span>.log(<span class="number">123</span>);</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> buildingLayer = <span class="keyword">new</span> AMap.Buildings(&#123;<span class="attr">zIndex</span>:<span class="number">130</span>,<span class="attr">merge</span>:<span class="literal">false</span>,<span class="attr">sort</span>:<span class="literal">false</span>,<span class="attr">zooms</span>:[<span class="number">16</span>, <span class="number">20</span>]&#125;);</span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> options = </span></span><br><span class="line"><span class="javascript">      &#123;</span></span><br><span class="line"><span class="javascript">            <span class="attr">hideWithoutStyle</span>:<span class="literal">false</span>,<span class="comment">//是否隐藏设定区域外的楼块</span></span></span><br><span class="line"><span class="javascript">            <span class="attr">areas</span>:[&#123; <span class="comment">//围栏1</span></span></span><br><span class="line"><span class="javascript">                  <span class="attr">color1</span>: <span class="string">&#x27;ffffff00&#x27;</span>,<span class="comment">//楼顶颜色</span></span></span><br><span class="line"><span class="javascript">                  <span class="attr">color2</span>: <span class="string">&#x27;ffffcc00&#x27;</span>,<span class="comment">//楼面颜色</span></span></span><br><span class="line"><span class="javascript">                  <span class="attr">path</span>: [[<span class="number">123.044521</span>,<span class="number">41.647788</span>],[<span class="number">123.044562</span>,<span class="number">41.648044</span>],[<span class="number">123.042444</span>,<span class="number">41.647999</span>],[<span class="number">123.04219</span>,<span class="number">41.648885</span>],[<span class="number">123.04126</span>,<span class="number">41.64866</span>],[<span class="number">123.041128</span>,<span class="number">41.649053</span>],[<span class="number">123.039929</span>,<span class="number">41.648857</span>],[<span class="number">123.040015</span>,<span class="number">41.648449</span>],[<span class="number">123.038801</span>,<span class="number">41.648241</span>],[<span class="number">123.039059</span>,<span class="number">41.646814</span>],[<span class="number">123.039307</span>,<span class="number">41.646003</span>],[<span class="number">123.04011</span>,<span class="number">41.643241</span>],[<span class="number">123.04101</span>,<span class="number">41.643405</span>],[<span class="number">123.041192</span>,<span class="number">41.643431</span>],[<span class="number">123.041326</span>,<span class="number">41.643488</span>],[<span class="number">123.041621</span>,<span class="number">41.643107</span>],[<span class="number">123.041905</span>,<span class="number">41.642735</span>],[<span class="number">123.042493</span>,<span class="number">41.641885</span>],[<span class="number">123.042813</span>,<span class="number">41.641468</span>],[<span class="number">123.042974</span>,<span class="number">41.641259</span>],[<span class="number">123.043188</span>,<span class="number">41.641107</span>],[<span class="number">123.04379</span>,<span class="number">41.640861</span>],[<span class="number">123.044424</span>,<span class="number">41.640654</span>],[<span class="number">123.045042</span>,<span class="number">41.640428</span>],[<span class="number">123.045357</span>,<span class="number">41.64033</span>],[<span class="number">123.046128</span>,<span class="number">41.639983</span>],[<span class="number">123.046868</span>,<span class="number">41.639612</span>],[<span class="number">123.048426</span>,<span class="number">41.640379</span>],[<span class="number">123.049222</span>,<span class="number">41.640783</span>],[<span class="number">123.04956</span>,<span class="number">41.641045</span>],[<span class="number">123.049856</span>,<span class="number">41.641315</span>],[<span class="number">123.050283</span>,<span class="number">41.641883</span>],[<span class="number">123.050753</span>,<span class="number">41.642442</span>],[<span class="number">123.05125</span>,<span class="number">41.642985</span>],[<span class="number">123.051461</span>,<span class="number">41.643265</span>],[<span class="number">123.051577</span>,<span class="number">41.643409</span>],[<span class="number">123.051618</span>,<span class="number">41.643561</span>],[<span class="number">123.051594</span>,<span class="number">41.643925</span>],[<span class="number">123.050639</span>,<span class="number">41.643991</span>],[<span class="number">123.050058</span>,<span class="number">41.645804</span>],[<span class="number">123.050568</span>,<span class="number">41.645833</span>],[<span class="number">123.050524</span>,<span class="number">41.64614</span>],[<span class="number">123.049487</span>,<span class="number">41.64615</span>],[<span class="number">123.047676</span>,<span class="number">41.645757</span>],[<span class="number">123.047576</span>,<span class="number">41.647537</span>],[<span class="number">123.044881</span>,<span class="number">41.647431</span>],[<span class="number">123.044879</span>,<span class="number">41.647806</span>]]</span></span><br><span class="line"><span class="javascript">          &#125;, &#123; <span class="comment">//围栏2</span></span></span><br><span class="line"><span class="javascript">                  <span class="attr">color1</span>: <span class="string">&#x27;ff99ff00&#x27;</span>,</span></span><br><span class="line"><span class="javascript">                  <span class="attr">color2</span>: <span class="string">&#x27;ff999900&#x27;</span>,</span></span><br><span class="line"><span class="javascript">                  <span class="attr">path</span>: [[<span class="number">116.474609</span>,<span class="number">39.993478</span>],[<span class="number">116.474489</span>,<span class="number">39.993495</span>],[<span class="number">116.473693</span>,<span class="number">39.994009</span>],[<span class="number">116.472898</span>,<span class="number">39.994546</span>],[<span class="number">116.472837</span>,<span class="number">39.9946</span>],[<span class="number">116.4728</span>,<span class="number">39.994653</span>],[<span class="number">116.472779</span>,<span class="number">39.994745</span>],[<span class="number">116.47282</span>,<span class="number">39.994815</span>],[<span class="number">116.47491</span>,<span class="number">39.99655</span>],[<span class="number">116.475041</span>,<span class="number">39.996607</span>],[<span class="number">116.47525</span>,<span class="number">39.996643</span>],[<span class="number">116.475715</span>,<span class="number">39.996686</span>],[<span class="number">116.475947</span>,<span class="number">39.996688</span>],[<span class="number">116.476103</span>,<span class="number">39.996658</span>],[<span class="number">116.477228</span>,<span class="number">39.995932</span>],[<span class="number">116.477261</span>,<span class="number">39.995833</span>],[<span class="number">116.477264</span>,<span class="number">39.995729</span>],[<span class="number">116.477205</span>,<span class="number">39.995625</span>],[<span class="number">116.47642</span>,<span class="number">39.994899</span>],[<span class="number">116.474854</span>,<span class="number">39.993558</span>],[<span class="number">116.47469</span>,<span class="number">39.99348</span>],[<span class="number">116.474609</span>,<span class="number">39.993478</span>]]</span></span><br><span class="line"><span class="javascript">          &#125;]</span></span><br><span class="line"><span class="javascript">      &#125;;</span></span><br><span class="line"><span class="javascript">      buildingLayer.setStyle(options); <span class="comment">//此配色优先级高于自定义mapStyle</span></span></span><br><span class="line"><span class="javascript">      <span class="comment">// 添加楼变色</span></span></span><br><span class="line"><span class="javascript">      map.add(buildingLayer)</span></span><br><span class="line"><span class="javascript">      <span class="comment">// 添加楼变色的外圈</span></span></span><br><span class="line"><span class="javascript">    <span class="keyword">for</span> (<span class="keyword">let</span> index = <span class="number">0</span>; index &lt; options.areas.length; index++) &#123;</span></span><br><span class="line"><span class="javascript">      <span class="keyword">let</span> Polygon = <span class="keyword">new</span> AMap.Polygon(&#123;</span></span><br><span class="line"><span class="javascript">          <span class="attr">bubble</span>:<span class="literal">true</span>,</span></span><br><span class="line"><span class="javascript">          <span class="attr">fillColor</span>:options.areas[index].color1,</span></span><br><span class="line"><span class="javascript">          <span class="attr">strokeColor</span>:options.areas[index].color2,</span></span><br><span class="line"><span class="javascript">          <span class="attr">fillOpacity</span>:<span class="number">0.3</span>,</span></span><br><span class="line"><span class="javascript">          <span class="attr">strokeWeight</span>:<span class="number">4</span>,</span></span><br><span class="line"><span class="javascript">          <span class="attr">path</span>:options.areas[index].path,</span></span><br><span class="line"><span class="javascript">      &#125;)</span></span><br><span class="line"><span class="javascript">      map.add(Polygon)</span></span><br><span class="line"><span class="javascript">      Polygon.on(<span class="string">&#x27;click&#x27;</span>,<span class="function"><span class="keyword">function</span> (<span class="params">ev,i</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">        <span class="built_in">console</span>.log(ev,i);</span></span><br><span class="line"><span class="javascript">        map.panTo([<span class="number">123.4450268</span>,<span class="number">41.771666</span>]);</span></span><br><span class="line"><span class="javascript">      &#125;)</span></span><br><span class="line"><span class="javascript">    &#125;</span></span><br><span class="line"><span class="javascript">    &#125;,<span class="number">3000</span>)</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">    map.on(<span class="string">&#x27;click&#x27;</span>, <span class="function"><span class="keyword">function</span> (<span class="params">ev</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">      <span class="built_in">console</span>.log(ev);</span></span><br><span class="line"><span class="javascript">      <span class="comment">// 触发事件的对象</span></span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> target = ev.target;</span></span><br><span class="line"><span class="javascript">      <span class="comment">// 触发事件的地理坐标，AMap.LngLat 类型</span></span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> lnglat = ev.lnglat;</span></span><br><span class="line"><span class="javascript">      <span class="comment">// 触发事件的像素坐标，AMap.Pixel 类型</span></span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> pixel = ev.pixel;</span></span><br><span class="line"><span class="javascript">      <span class="comment">// 触发事件类型</span></span></span><br><span class="line"><span class="javascript">      <span class="keyword">var</span> type = ev.type;</span></span><br><span class="line"><span class="javascript">    &#125;);</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// 构造点标记  map.add(marker);</span></span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> marker = <span class="keyword">new</span> AMap.Marker(&#123;</span></span><br><span class="line"><span class="javascript">      <span class="attr">icon</span>:<span class="keyword">new</span> AMap.Icon(&#123;            </span></span><br><span class="line"><span class="javascript">          <span class="attr">image</span>: <span class="string">&#x27;http://imgdl.tripln.top/webhdfs/v1//_3340741777.png?op=OPEN&amp;namenoderpcaddress=hadoop01:9000&amp;offset=0&#x27;</span>,</span></span><br><span class="line"><span class="javascript">          <span class="attr">size</span>: <span class="keyword">new</span> AMap.Size(<span class="number">30</span>, <span class="number">30</span>),  <span class="comment">//图标所处区域大小</span></span></span><br><span class="line"><span class="javascript">          <span class="attr">imageSize</span>: <span class="keyword">new</span> AMap.Size(<span class="number">30</span>,<span class="number">30</span>) <span class="comment">//图标大小</span></span></span><br><span class="line"><span class="javascript">      &#125;),     </span></span><br><span class="line"><span class="javascript">      <span class="attr">position</span>: [<span class="number">123.465737</span>,<span class="number">41.747632</span>],</span></span><br><span class="line"><span class="javascript">      <span class="attr">offset</span>: <span class="keyword">new</span> AMap.Pixel(<span class="number">0</span>,-<span class="number">30</span>)<span class="comment">//(-10, -30)</span></span></span><br><span class="line"><span class="javascript">    &#125;);</span></span><br><span class="line"><span class="javascript">    map.add(marker);</span></span><br><span class="line"><span class="javascript">    </span></span><br><span class="line"><span class="javascript">    <span class="comment">// 构造矢量圆形</span></span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> circle = <span class="keyword">new</span> AMap.Circle(&#123;</span></span><br><span class="line"><span class="javascript">      <span class="attr">center</span>: <span class="keyword">new</span> AMap.LngLat(<span class="string">&quot;123.4450268&quot;</span>, <span class="string">&quot;41.771666&quot;</span>), <span class="comment">// 圆心位置</span></span></span><br><span class="line"><span class="javascript">      <span class="attr">radius</span>: <span class="number">400</span>,  <span class="comment">//半径</span></span></span><br><span class="line"><span class="javascript">      <span class="attr">strokeColor</span>: <span class="string">&quot;black&quot;</span>,  <span class="comment">//线颜色</span></span></span><br><span class="line"><span class="javascript">      <span class="attr">strokeOpacity</span>: <span class="number">1</span>,  <span class="comment">//线透明度</span></span></span><br><span class="line"><span class="javascript">      <span class="attr">strokeWeight</span>: <span class="number">3</span>,  <span class="comment">//线粗细度</span></span></span><br><span class="line"><span class="javascript">      <span class="attr">fillColor</span>: <span class="string">&quot;#FFFFFF&quot;</span>,  <span class="comment">//填充颜色</span></span></span><br><span class="line"><span class="javascript">      <span class="attr">fillOpacity</span>: <span class="number">0.35</span> <span class="comment">//填充透明度</span></span></span><br><span class="line"><span class="javascript">    &#125;);</span></span><br><span class="line"><span class="javascript">    map.add(circle);</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">    <span class="keyword">let</span> dialog = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;.dialog&#x27;</span>)</span></span><br><span class="line"><span class="javascript">    marker.on(<span class="string">&#x27;click&#x27;</span>,<span class="function">(<span class="params">ev</span>) =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">      dialog.style.left = <span class="string">&#x27;50%&#x27;</span></span></span><br><span class="line"><span class="javascript">      map.panTo([<span class="number">123.4450268</span>,<span class="number">41.771666</span>]);</span></span><br><span class="line"><span class="javascript">    &#125;)</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">    <span class="function"><span class="keyword">function</span> <span class="title">closeDialog</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">      dialog.style.left = <span class="string">&#x27;-500px&#x27;</span></span></span><br><span class="line"><span class="javascript">    &#125;</span></span><br><span class="line"><span class="javascript">    <span class="function"><span class="keyword">function</span> <span class="title">Polygon</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">      dialog.style.left = <span class="string">&#x27;-500px&#x27;</span></span></span><br><span class="line"><span class="javascript">      map.panTo([<span class="number">123.044521</span>,<span class="number">41.647788</span>])</span></span><br><span class="line"><span class="javascript">    &#125;</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">    circle.on(<span class="string">&#x27;click&#x27;</span>,<span class="function">(<span class="params">ev</span>) =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">      dialog.style.left = <span class="string">&#x27;50%&#x27;</span></span></span><br><span class="line"><span class="javascript">      map.panTo([<span class="number">123.465737</span>, <span class="number">41.747632</span>])</span></span><br><span class="line"><span class="javascript">    &#125;)</span></span><br><span class="line"><span class="javascript">  </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="vue-code"><a href="#vue-code" class="headerlink" title="vue code"></a>vue code</h2><h3 id="下载高德依赖"><a href="#下载高德依赖" class="headerlink" title="下载高德依赖"></a>下载高德依赖</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install @amap/amap-jsapi-loader --save</span><br></pre></td></tr></table></figure>
+<p><strong>or</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yarn add @amap/amap-jsapi-loader</span><br></pre></td></tr></table></figure>
+
+<h3 id="main-js"><a href="#main-js" class="headerlink" title="main.js"></a>main.js</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.js</span></span><br><span class="line"><span class="comment">// 地图</span></span><br><span class="line"><span class="keyword">import</span> AMapLoader <span class="keyword">from</span> <span class="string">&#x27;@amap/amap-jsapi-loader&#x27;</span>;</span><br><span class="line"><span class="comment">// 初始化地图</span></span><br><span class="line"><span class="keyword">import</span> &#123; aMapLoad,initAMap &#125; <span class="keyword">from</span> <span class="string">&#x27;./libs/initAMap&#x27;</span></span><br><span class="line"></span><br><span class="line">AMapLoader.load(aMapLoad).then(<span class="function">(<span class="params">AMap</span>)=&gt;</span>&#123;</span><br><span class="line">  initAMap(AMap)</span><br><span class="line">&#125;).catch(<span class="function"><span class="params">e</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(e);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">JSON</span>.stringify(e), <span class="string">&#x27;main.js----地图&#x27;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="initAMap-js"><a href="#initAMap-js" class="headerlink" title="initAMap.js"></a>initAMap.js</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 地图初始化参数</span></span><br><span class="line"><span class="keyword">const</span> aMapLoad = &#123;</span><br><span class="line">  <span class="string">&quot;key&quot;</span>: <span class="string">&quot;你申请的高德key&quot;</span>, <span class="comment">// 申请好的Web端开发者Key，首次调用 load 时必填</span></span><br><span class="line">  <span class="string">&quot;version&quot;</span>: <span class="string">&quot;2.0&quot;</span>, <span class="comment">// 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15</span></span><br><span class="line">  <span class="string">&quot;plugins&quot;</span>: [<span class="string">&#x27;AMap.DistrictSearch&#x27;</span>,<span class="string">&#x27;AMap.Lights.AmbientLight&#x27;</span>], <span class="comment">// 需要使用的的插件列表，如比例尺&#x27;AMap.Scale&#x27;等</span></span><br><span class="line">  <span class="string">&quot;Loca&quot;</span>:&#123;                <span class="comment">// 是否加载 Loca， 缺省不加载</span></span><br><span class="line">      <span class="string">&quot;version&quot;</span>: <span class="string">&#x27;2.0&#x27;</span>  <span class="comment">// Loca 版本，缺省 1.3.2</span></span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 地图配置参数</span></span><br><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  <span class="attr">mapStyle</span>: <span class="string">&quot;amap://styles/你在自定义地图发布后获取&quot;</span>,</span><br><span class="line">  <span class="attr">resizeEnable</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">pitch</span>: <span class="number">50</span>, <span class="comment">// 相机角度</span></span><br><span class="line">  <span class="attr">rotation</span>: <span class="number">25</span>, <span class="comment">// 相机旋转角度</span></span><br><span class="line">  <span class="attr">viewMode</span>: <span class="string">&quot;3D&quot;</span>, <span class="comment">//开启3D视图,默认为关闭</span></span><br><span class="line">  <span class="attr">zooms</span>: [<span class="number">12</span>, <span class="number">19</span>], <span class="comment">// 区间</span></span><br><span class="line">  <span class="attr">center</span>: [<span class="number">116.25</span>,<span class="number">39.5</span>], <span class="comment">// 中心点</span></span><br><span class="line">  <span class="attr">zoom</span>: <span class="number">16.8</span>, <span class="comment">// 显示级</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> amapl, map, buildingLayer, PolygonArray = []</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化地图</span></span><br><span class="line"><span class="keyword">const</span> initAMap = <span class="function">(<span class="params">AMap</span>) =&gt;</span> &#123;</span><br><span class="line">  amapl = AMap</span><br><span class="line">  map = <span class="keyword">new</span> AMap.Map(<span class="string">&quot;container&quot;</span>, config)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 初始化区变块</span></span><br><span class="line">  areaBlock()</span><br><span class="line">  <span class="comment">// 监听地图加载完成的回调</span></span><br><span class="line">  map.on(<span class="string">&quot;complete&quot;</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="comment">// 延迟2s 因为地图加载会有将近1s+渲染时间</span></span><br><span class="line">      <span class="keyword">const</span> STT = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// 调用vue中的方法 显示地图</span></span><br><span class="line">        <span class="built_in">window</span>.mapLoad(<span class="literal">true</span>)</span><br><span class="line">        <span class="comment">// 渲染后回收</span></span><br><span class="line">        <span class="built_in">clearTimeout</span>(STT)</span><br><span class="line">      &#125;,<span class="number">2000</span>)</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 楼变色方法加画圈</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param <span class="type">&#123;Array&#125;</span> </span>areas 变色的楼区</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param <span class="type">&#123;Object&#125;</span> </span>areas.&#123;&#125;  &#123; color1: &#x27;ff99ff00&#x27;, color2: &#x27;ff999900&#x27;,  path: [ [116.474609, 39.993478]] &#125;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param <span class="type">&#123;String&#125;</span> </span>areas[0].color1 // 楼顶颜色 &#x27;ff99ff00&#x27;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param <span class="type">&#123;String&#125;</span> </span>areas[0].color2 // 楼面颜色 &#x27;ff999900&#x27;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param <span class="type">&#123;String&#125;</span> </span>areas[0].path // 要变色区组 [[1.11111,40.00000],[2.22222,41.11111]]</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">const</span> disColor = <span class="function">(<span class="params">areas</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 数据不能为空</span></span><br><span class="line">  <span class="keyword">if</span> (areas.length &lt;= <span class="number">0</span>) <span class="keyword">return</span></span><br><span class="line">  <span class="comment">// 地图平移</span></span><br><span class="line">  panTo(areas[<span class="number">0</span>].path[<span class="number">0</span>])</span><br><span class="line">  <span class="built_in">window</span>.mapLoad(<span class="literal">false</span>)</span><br><span class="line">  <span class="keyword">const</span> STO = <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">window</span>.mapLoad(<span class="literal">true</span>)</span><br><span class="line">    <span class="built_in">clearTimeout</span>(STO)</span><br><span class="line">    <span class="comment">// 删除楼上色 删除圈圈</span></span><br><span class="line">    removeDisColor();</span><br><span class="line">    <span class="comment">// 准备给楼上色</span></span><br><span class="line">    buildingLayer = <span class="keyword">new</span> amapl.Buildings(&#123; <span class="attr">zIndex</span>: <span class="number">15</span>, <span class="attr">merge</span>: <span class="literal">false</span>, <span class="attr">sort</span>: <span class="literal">false</span>, <span class="attr">zooms</span>: [<span class="number">12</span>, <span class="number">20</span>], <span class="attr">opacity</span>:<span class="number">1</span>  &#125;)</span><br><span class="line">    <span class="keyword">var</span> options = &#123; <span class="attr">hideWithoutStyle</span>: <span class="literal">false</span>, areas &#125; <span class="comment">// hideWithoutStyle === 是否隐藏设定区域外的楼块</span></span><br><span class="line">    buildingLayer.setStyle(options) <span class="comment">//此配色优先级高于自定义mapStyle</span></span><br><span class="line">    map.add(buildingLayer)</span><br><span class="line">    <span class="comment">// 画个圈圈诅咒楼</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> index = <span class="number">0</span>; index &lt; areas.length; index++) &#123;</span><br><span class="line">      <span class="keyword">let</span> Polygon = <span class="keyword">new</span> amapl.Polygon(&#123;</span><br><span class="line">        <span class="attr">bubble</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">fillColor</span>: areas[index].color1,</span><br><span class="line">        <span class="attr">strokeColor</span>: areas[index].color2,</span><br><span class="line">        <span class="attr">fillOpacity</span>: <span class="number">0.3</span>,</span><br><span class="line">        <span class="attr">strokeWeight</span>: <span class="number">4</span>,</span><br><span class="line">        <span class="attr">path</span>: areas[index].path,</span><br><span class="line">      &#125;)</span><br><span class="line">      <span class="comment">// 添加数组 为了以后删除所有线</span></span><br><span class="line">      PolygonArray.push(Polygon)</span><br><span class="line">      map.add(Polygon)</span><br><span class="line">      setZoom(<span class="number">16.8</span>)</span><br><span class="line">      Polygon.on(<span class="string">&#x27;click&#x27;</span>, <span class="function"><span class="keyword">function</span> (<span class="params">ev, i</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(ev, i);</span><br><span class="line">        panTo([<span class="number">123.4450268</span>, <span class="number">41.771666</span>]);</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, <span class="number">2000</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 删除楼上色 + 删除画圈 方法</span></span><br><span class="line"><span class="keyword">const</span> removeDisColor = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 判断是否已经画过圈 并且 给楼上过色</span></span><br><span class="line">  <span class="keyword">if</span> (buildingLayer &amp;&amp; PolygonArray) &#123;</span><br><span class="line">    <span class="comment">// 删除楼上色</span></span><br><span class="line">    map.remove(buildingLayer)</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> index = <span class="number">0</span>; index &lt; PolygonArray.length; index++) &#123;</span><br><span class="line">      <span class="comment">// 删除圈圈</span></span><br><span class="line">      map.remove(PolygonArray[index])</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param <span class="type">&#123;Number&#125;</span> </span>缩放级别 </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">const</span> setZoom = <span class="function">(<span class="params">n</span>) =&gt;</span> &#123;</span><br><span class="line">  map.setZoom(n);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * [123.4450268, 41.771666] </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param <span class="type">&#123;Array&#125;</span> </span>地图平移</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">const</span> panTo = <span class="function">(<span class="params">arr</span>) =&gt;</span> &#123;</span><br><span class="line">  map.panTo(arr);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> areaBlock = <span class="function">() =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">new</span> amapl.DistrictSearch(&#123;</span><br><span class="line">    <span class="attr">subdistrict</span>: <span class="number">0</span>,   <span class="comment">//返回下一级行政区</span></span><br><span class="line">    <span class="attr">extensions</span>: <span class="string">&#x27;all&#x27;</span>,  <span class="comment">//返回行政区边界坐标组等具体信息</span></span><br><span class="line">    <span class="attr">level</span>: <span class="string">&#x27;city&#x27;</span>  <span class="comment">//查询行政级别为 市</span></span><br><span class="line">&#125;).search(<span class="string">&#x27;铁西区&#x27;</span>, <span class="function"><span class="keyword">function</span> (<span class="params">status, result</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(result.districtList);</span><br><span class="line">    <span class="keyword">var</span> bounds = result.districtList[<span class="number">0</span>].boundaries;</span><br><span class="line">    <span class="keyword">var</span> height = <span class="number">5000</span>;</span><br><span class="line">    <span class="keyword">var</span> color = <span class="string">&#x27;#0088ffcc&#x27;</span>; <span class="comment">// rgba</span></span><br><span class="line">    <span class="keyword">var</span> prism = <span class="keyword">new</span> amapl.Object3D.Prism(&#123;</span><br><span class="line">        <span class="attr">path</span>: bounds,</span><br><span class="line">        <span class="attr">height</span>: height,</span><br><span class="line">        <span class="attr">color</span>: color</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    prism.transparent = <span class="literal">true</span>;</span><br><span class="line">    <span class="comment">// object3Dlayer.add(prism);</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> text = <span class="keyword">new</span> amapl.Text(&#123;</span><br><span class="line">        <span class="attr">text</span>: result.districtList[<span class="number">0</span>].name + <span class="string">&#x27;&lt;/br&gt;(&#x27;</span> + result.districtList[<span class="number">0</span>].adcode + <span class="string">&#x27;)&#x27;</span>,</span><br><span class="line">        <span class="attr">verticalAlign</span>: <span class="string">&#x27;bottom&#x27;</span>,</span><br><span class="line">        <span class="attr">position</span>: [<span class="number">116.528261</span>, <span class="number">39.934313</span>],</span><br><span class="line">        <span class="attr">height</span>: <span class="number">5000</span>,</span><br><span class="line">        <span class="attr">style</span>: &#123;</span><br><span class="line">            <span class="string">&#x27;background-color&#x27;</span>: <span class="string">&#x27;transparent&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;-webkit-text-stroke&#x27;</span>: <span class="string">&#x27;red&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;-webkit-text-stroke-width&#x27;</span>: <span class="string">&#x27;0.5px&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;text-align&#x27;</span>: <span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;border&#x27;</span>: <span class="string">&#x27;none&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;color&#x27;</span>: <span class="string">&#x27;white&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;font-size&#x27;</span>: <span class="string">&#x27;24px&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;font-weight&#x27;</span>: <span class="number">600</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    text.setMap(map);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * aMapLoad 地图初始化参数</span></span><br><span class="line"><span class="comment"> * initAMap 初始化地图</span></span><br><span class="line"><span class="comment"> * disColor 楼变色加画圈</span></span><br><span class="line"><span class="comment"> * removeDisColor 删除上一波的楼变色</span></span><br><span class="line"><span class="comment"> * setZoom 设置缩放级别</span></span><br><span class="line"><span class="comment"> * panTo 平移地图</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> &#123; aMapLoad, initAMap, disColor, removeDisColor, setZoom, panTo&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Home-vue"><a href="#Home-vue" class="headerlink" title="Home.vue"></a>Home.vue</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;!-- 地图 --&gt;</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;container&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">class</span>=<span class="string">&quot;btn&quot;</span> @<span class="attr">click</span>=<span class="string">&quot;send(1)&quot;</span>&gt;</span>初始化颜色楼<span class="tag">&lt;/<span class="name">button</span>&gt;</span> </span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">class</span>=<span class="string">&quot;btn btn1&quot;</span> @<span class="attr">click</span>=<span class="string">&quot;send(2)&quot;</span>&gt;</span>清除颜色楼2<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span></span><br><span class="line"><span class="javascript"><span class="xml"><span class="keyword">import</span> &#123; disColor, removeDisColor &#125; <span class="keyword">from</span> <span class="string">&#x27;../libs/initAMap&#x27;</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">  <span class="attr">name</span>: <span class="string">&quot;Home&quot;</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">  data () &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="keyword">return</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">      <span class="attr">config1</span>:[&#123; <span class="comment">//围栏2</span></span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="attr">color1</span>: <span class="string">&#x27;ff99ff00&#x27;</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="attr">color2</span>: <span class="string">&#x27;ff999900&#x27;</span>,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="attr">path</span>: [[<span class="number">116.474609</span>, <span class="number">39.993478</span>], [<span class="number">116.474489</span>, <span class="number">39.993495</span>], [<span class="number">116.473693</span>, <span class="number">39.994009</span>], [<span class="number">116.472898</span>, <span class="number">39.994546</span>], [<span class="number">116.472837</span>, <span class="number">39.9946</span>], [<span class="number">116.4728</span>, <span class="number">39.994653</span>], [<span class="number">116.472779</span>, <span class="number">39.994745</span>], [<span class="number">116.47282</span>, <span class="number">39.994815</span>], [<span class="number">116.47491</span>, <span class="number">39.99655</span>], [<span class="number">116.475041</span>, <span class="number">39.996607</span>], [<span class="number">116.47525</span>, <span class="number">39.996643</span>], [<span class="number">116.475715</span>, <span class="number">39.996686</span>], [<span class="number">116.475947</span>, <span class="number">39.996688</span>], [<span class="number">116.476103</span>, <span class="number">39.996658</span>], [<span class="number">116.477228</span>, <span class="number">39.995932</span>], [<span class="number">116.477261</span>, <span class="number">39.995833</span>], [<span class="number">116.477264</span>, <span class="number">39.995729</span>], [<span class="number">116.477205</span>, <span class="number">39.995625</span>], [<span class="number">116.47642</span>, <span class="number">39.994899</span>], [<span class="number">116.474854</span>, <span class="number">39.993558</span>], [<span class="number">116.47469</span>, <span class="number">39.99348</span>], [<span class="number">116.474609</span>, <span class="number">39.993478</span>]]</span></span></span><br><span class="line"><span class="javascript"><span class="xml">      &#125;],</span></span></span><br><span class="line"><span class="javascript"><span class="xml">      <span class="attr">config2</span>:[]</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">  &#125;, </span></span></span><br><span class="line"><span class="javascript"><span class="xml">  <span class="function"><span class="title">mounted</span>(<span class="params"></span>)</span> &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="built_in">window</span>.mapLoad = <span class="built_in">this</span>.mapLoad</span></span></span><br><span class="line"><span class="javascript"><span class="xml">  &#125;,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">  <span class="attr">methods</span>: &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    mapLoad (mapIsShowBool) &#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">      <span class="built_in">this</span>.mapIsShowBool = mapIsShowBool</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    &#125;,</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="function"><span class="title">send</span>(<span class="params">i</span>)</span>&#123;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">      i === <span class="number">1</span> ? disColor(<span class="built_in">this</span>.config1) : removeDisColor()</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">  &#125;</span></span></span><br><span class="line"><span class="javascript"><span class="xml">&#125;;</span></span></span><br><span class="line"><span class="javascript"><span class="xml"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">style</span> <span class="attr">scoped</span>&gt;</span><span class="css"></span></span></span><br><span class="line"><span class="css"><span class="xml"><span class="selector-class">.root-container</span>&#123;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">height</span>: <span class="number">100%</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">position</span>: relative;</span></span></span><br><span class="line"><span class="css"><span class="xml">&#125;</span></span></span><br><span class="line"><span class="css"><span class="xml"><span class="selector-id">#container</span> &#123;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">height</span>: <span class="number">100%</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">position</span>: relative;</span></span></span><br><span class="line"><span class="css"><span class="xml">&#125;</span></span></span><br><span class="line"><span class="css"><span class="xml"><span class="selector-class">.loading-bg</span>&#123;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">height</span>: <span class="number">100%</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">background</span>: <span class="number">#292c33</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">color</span>: white;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">text-align</span>: center;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">font-size</span>: <span class="number">14px</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">&#125;</span></span></span><br><span class="line"><span class="css"><span class="xml"><span class="selector-class">.loading</span> &#123;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">position</span>: absolute;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">top</span>: <span class="number">50%</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">left</span>: <span class="number">50%</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">transform</span>: <span class="built_in">translate</span>(-<span class="number">50%</span>, -<span class="number">50%</span>);</span></span></span><br><span class="line"><span class="css"><span class="xml">&#125;</span></span></span><br><span class="line"><span class="css"><span class="xml">&gt;&gt;&gt;<span class="selector-class">.amap-logo</span>,&gt;&gt;&gt;<span class="selector-class">.amap-copyright</span> &#123; <span class="attribute">display</span>: none <span class="meta">!important</span>; &#125;</span></span></span><br><span class="line"><span class="css"><span class="xml"><span class="selector-class">.btn</span>&#123;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">position</span>: absolute;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">z-index</span>: <span class="number">2031</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">top</span>: <span class="number">0</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">left</span>: <span class="number">50%</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">&#125;</span></span></span><br><span class="line"><span class="css"><span class="xml"><span class="selector-class">.btn1</span>&#123;</span></span></span><br><span class="line"><span class="css"><span class="xml">  <span class="attribute">left</span>: <span class="number">60%</span>;</span></span></span><br><span class="line"><span class="css"><span class="xml">&#125;</span></span></span><br><span class="line"><span class="css"><span class="xml"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p><code>到这里样式都出来了 剩下的一些细节就自己去翻高德文档吧 切记～有些版本不知道一些方法!!!!</code></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/webgl/" rel="tag"># webgl</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/11/24/%E8%8A%82%E6%B5%81%E4%B8%8E%E9%98%B2%E6%8A%96And%E6%BB%9A%E5%8A%A8%E6%9D%A1%E7%AF%87/" rel="prev" title="节流与防抖And滚动条篇">
+      <i class="fa fa-chevron-left"></i> 节流与防抖And滚动条篇
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%A5%E5%90%A7%E5%B1%95%E7%A4%BA"><span class="nav-number">1.</span> <span class="nav-text">来吧展示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AC%E5%8F%B8%E9%9C%80%E6%B1%82"><span class="nav-number">2.</span> <span class="nav-text">公司需求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%9C%B0%E5%9B%BE%E7%AF%87"><span class="nav-number">3.</span> <span class="nav-text">自定义地图篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#javascript-code"><span class="nav-number">4.</span> <span class="nav-text">javascript code</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vue-code"><span class="nav-number">5.</span> <span class="nav-text">vue code</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E9%AB%98%E5%BE%B7%E4%BE%9D%E8%B5%96"><span class="nav-number">5.1.</span> <span class="nav-text">下载高德依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#main-js"><span class="nav-number">5.2.</span> <span class="nav-text">main.js</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#initAMap-js"><span class="nav-number">5.3.</span> <span class="nav-text">initAMap.js</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Home-vue"><span class="nav-number">5.4.</span> <span class="nav-text">Home.vue</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Li XiaoXu</p>
+  <div class="site-description" itemprop="description">All those years' journey</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2021/11/11 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Li XiaoXu</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'NbKqUmDgCHWzuXg9A1D93KKt-gzGzoHsz',
+      appKey     : 'Eb0zuOdU50riEWiefpgwOl2q',
+      placeholder: "人要没有梦想~跟咸鱼有什么区别~~",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
