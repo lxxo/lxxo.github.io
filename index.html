@@ -181,6 +181,99 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CH">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/11/vue%E9%80%82%E9%85%8Dvw%E7%A7%BB%E5%8A%A8%E7%AB%AF750%E7%A8%BF%E9%80%82%E9%85%8Dvant-375%E8%A7%86%E5%9B%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Li XiaoXu">
+      <meta itemprop="description" content="All those years' journey">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxxo.github.io">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/12/11/vue%E9%80%82%E9%85%8Dvw%E7%A7%BB%E5%8A%A8%E7%AB%AF750%E7%A8%BF%E9%80%82%E9%85%8Dvant-375%E8%A7%86%E5%9B%BE/" class="post-title-link" itemprop="url">移动端终极适配方案-px转换vw750稿适配vant-375</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-12-11 00:31:59 / Modified: 00:45:37" itemprop="dateCreated datePublished" datetime="2021-12-11T00:31:59+08:00">2021-12-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/vue-js/" itemprop="url" rel="index"><span itemprop="name">vue.js</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2021/12/11/vue%E9%80%82%E9%85%8Dvw%E7%A7%BB%E5%8A%A8%E7%AB%AF750%E7%A8%BF%E9%80%82%E9%85%8Dvant-375%E8%A7%86%E5%9B%BE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/12/11/vue%E9%80%82%E9%85%8Dvw%E7%A7%BB%E5%8A%A8%E7%AB%AF750%E7%A8%BF%E9%80%82%E9%85%8Dvant-375%E8%A7%86%E5%9B%BE/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="下载依赖"><a href="#下载依赖" class="headerlink" title="下载依赖"></a>下载依赖</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ npm install postcss-px-to-viewport -D</span><br><span class="line">or</span><br><span class="line">$ yarn add postcss-px-to-viewport -D</span><br></pre></td></tr></table></figure>
+
+<h2 id="在根目录创建视频方案文件-postcss-config-js"><a href="#在根目录创建视频方案文件-postcss-config-js" class="headerlink" title="在根目录创建视频方案文件 postcss.config.js"></a>在根目录创建视频方案文件 <code>postcss.config.js</code></h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// postcss.config.js</span></span><br><span class="line"><span class="built_in">module</span>.exports = <span class="function">(<span class="params">&#123; file &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> vwUnit <span class="comment">// 判断条件 请自行调整 我使用的是 mand-mobile ui 没有对vant引入进行测试</span></span><br><span class="line">  <span class="keyword">if</span> (file &amp;&amp; file.dirname &amp;&amp; file.dirname.indexOf(<span class="string">&#x27;vant&#x27;</span>) &gt; -<span class="number">1</span>) &#123;</span><br><span class="line">    vwUnit = <span class="number">375</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    vwUnit = <span class="number">750</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="attr">plugins</span>: [</span><br><span class="line">      <span class="built_in">require</span>(<span class="string">&#x27;postcss-px-to-viewport&#x27;</span>)(&#123;</span><br><span class="line">        <span class="attr">unitToConvert</span>: <span class="string">&quot;px&quot;</span>, <span class="comment">// 要转化的单位</span></span><br><span class="line">        <span class="attr">viewportWidth</span>: vwUnit, <span class="comment">// UI设计稿的宽度</span></span><br><span class="line">        <span class="attr">unitPrecision</span>: <span class="number">6</span>, <span class="comment">// 转换后的精度，即小数点位数</span></span><br><span class="line">        <span class="attr">propList</span>: [<span class="string">&quot;*&quot;</span>], <span class="comment">// 指定转换的css属性的单位，*代表全部css属性的单位都进行转换</span></span><br><span class="line">        <span class="attr">viewportUnit</span>: <span class="string">&quot;vw&quot;</span>, <span class="comment">// 指定需要转换成的视窗单位，默认vw</span></span><br><span class="line">        <span class="attr">fontViewportUnit</span>: <span class="string">&quot;vw&quot;</span>, <span class="comment">// 指定字体需要转换成的视窗单位，默认vw</span></span><br><span class="line">        <span class="attr">selectorBlackList</span>: [<span class="string">&quot;wrap&quot;</span>], <span class="comment">// 指定不转换为视窗单位的类名，</span></span><br><span class="line">        <span class="attr">minPixelValue</span>: <span class="number">1</span>, <span class="comment">// 默认值1，小于或等于1px则不进行转换</span></span><br><span class="line">        <span class="attr">mediaQuery</span>: <span class="literal">true</span>, <span class="comment">// 是否在媒体查询的css代码中也进行转换，默认false</span></span><br><span class="line">        <span class="attr">replace</span>: <span class="literal">true</span>, <span class="comment">// 是否转换后直接更换属性值</span></span><br><span class="line">        <span class="attr">exclude</span>: [], <span class="comment">// 设置忽略文件，用正则做目录名匹配 /node_modules/</span></span><br><span class="line">        <span class="attr">landscape</span>: <span class="literal">false</span> <span class="comment">// 是否处理横屏情况</span></span><br><span class="line">      &#125;)</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="postcss-config-js-文件-不起作用解决方案"><a href="#postcss-config-js-文件-不起作用解决方案" class="headerlink" title="postcss.config.js 文件 不起作用解决方案"></a><code>postcss.config.js</code> 文件 不起作用解决方案</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/12/11/vue%E9%80%82%E9%85%8Dvw%E7%A7%BB%E5%8A%A8%E7%AB%AF750%E7%A8%BF%E9%80%82%E9%85%8Dvant-375%E8%A7%86%E5%9B%BE/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CH">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/07/webgl-three%E4%B8%8E%E9%AB%98%E5%BE%B7%E5%9C%B0%E5%9B%BE%E5%B1%95%E7%A4%BA3D%E5%9F%8E%E5%B8%82%E5%9C%B0%E5%9B%BE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -995,100 +1088,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CH">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/13/vue+vant%20%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Li XiaoXu">
-      <meta itemprop="description" content="All those years' journey">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="lxxo.github.io">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/11/13/vue+vant%20%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/" class="post-title-link" itemprop="url">vue+vant 图片压缩</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-11-13 12:47:58 / Modified: 12:59:50" itemprop="dateCreated datePublished" datetime="2021-11-13T12:47:58+08:00">2021-11-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/vue-js/" itemprop="url" rel="index"><span itemprop="name">vue.js</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine: </span>
-    
-    <a title="valine" href="/2021/11/13/vue+vant%20%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/11/13/vue+vant%20%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="vue-vant图片压缩"><a href="#vue-vant图片压缩" class="headerlink" title="vue+vant图片压缩"></a>vue+vant图片压缩</h1><blockquote>
-<p><strong>params:</strong> </p>
-</blockquote>
-<blockquote>
-<ul>
-<li> <strong>file:</strong> 上传的文件对象</li>
-<li> <strong>file.content:</strong> 是一个base64</li>
-</ul>
-<p><strong>return:</strong> </p>
-<ul>
-<li> <strong>return</strong>  返回压缩后的base64</li>
-</ul>
-</blockquote>
-<h3 id="Code-block"><a href="#Code-block" class="headerlink" title="Code block"></a>Code block</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">compress (file)&#123;</span><br><span class="line">	<span class="comment">// 创建Canvas对象(画布)</span></span><br><span class="line">    <span class="keyword">let</span> canvas = <span class="built_in">document</span>.createElement(<span class="string">&quot;canvas&quot;</span>);</span><br><span class="line">    <span class="comment">// 获取对应的CanvasRenderingContext2D对象(画笔)</span></span><br><span class="line">    <span class="keyword">let</span> context = canvas.getContext(<span class="string">&quot;2d&quot;</span>);</span><br><span class="line">    <span class="comment">// 创建新的图片对象</span></span><br><span class="line">    <span class="keyword">let</span> img = <span class="keyword">new</span> Image();</span><br><span class="line">    <span class="comment">// 指定图片的DataURL(图片的base64编码数据)</span></span><br><span class="line">    img.src = file.content;</span><br><span class="line">    <span class="comment">// 监听浏览器加载图片完成，然后进行进行绘制</span></span><br><span class="line">    img.onload = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 指定canvas画布大小，该大小为最后生成图片的大小</span></span><br><span class="line">    canvas.width = <span class="number">500</span>;</span><br><span class="line">    canvas.height = (img.height / img.width) * <span class="number">500</span>;</span><br><span class="line">    <span class="comment">/* drawImage画布绘制的方法。(0,0)表示以Canvas画布左上角为起点，400，300是将图片按给定的像素进行缩小。</span></span><br><span class="line"><span class="comment">	如果不指定缩小的像素图片将以图片原始大小进行绘制，图片像素如果大于画布将会从左上角开始按画布大小部分绘制图片，最后的图片就是张局部图。*/</span></span><br><span class="line">    context.drawImage(img, <span class="number">0</span>, <span class="number">0</span>,<span class="number">500</span>,(img.height / img.width) * <span class="number">500</span>);</span><br><span class="line">    <span class="comment">// 将绘制完成的图片重新转化为base64编码，file.file.type为图片类型，0.92为默认压缩质量</span></span><br><span class="line">    file.content = canvas.toDataURL(file.file.type, <span class="number">0.92</span>);</span><br><span class="line">    <span class="comment">// 压缩后的base64</span></span><br><span class="line">    <span class="built_in">console</span>.log(file.content);</span><br><span class="line">    <span class="keyword">return</span> file.content</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1158,7 +1157,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1171,7 +1170,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

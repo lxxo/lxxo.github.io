@@ -181,6 +181,100 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CH">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/13/vue+vant%20%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Li XiaoXu">
+      <meta itemprop="description" content="All those years' journey">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lxxo.github.io">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/11/13/vue+vant%20%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/" class="post-title-link" itemprop="url">vue+vant 图片压缩</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-11-13 12:47:58 / Modified: 12:59:50" itemprop="dateCreated datePublished" datetime="2021-11-13T12:47:58+08:00">2021-11-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/vue-js/" itemprop="url" rel="index"><span itemprop="name">vue.js</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2021/11/13/vue+vant%20%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/11/13/vue+vant%20%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="vue-vant图片压缩"><a href="#vue-vant图片压缩" class="headerlink" title="vue+vant图片压缩"></a>vue+vant图片压缩</h1><blockquote>
+<p><strong>params:</strong> </p>
+</blockquote>
+<blockquote>
+<ul>
+<li> <strong>file:</strong> 上传的文件对象</li>
+<li> <strong>file.content:</strong> 是一个base64</li>
+</ul>
+<p><strong>return:</strong> </p>
+<ul>
+<li> <strong>return</strong>  返回压缩后的base64</li>
+</ul>
+</blockquote>
+<h3 id="Code-block"><a href="#Code-block" class="headerlink" title="Code block"></a>Code block</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">compress (file)&#123;</span><br><span class="line">	<span class="comment">// 创建Canvas对象(画布)</span></span><br><span class="line">    <span class="keyword">let</span> canvas = <span class="built_in">document</span>.createElement(<span class="string">&quot;canvas&quot;</span>);</span><br><span class="line">    <span class="comment">// 获取对应的CanvasRenderingContext2D对象(画笔)</span></span><br><span class="line">    <span class="keyword">let</span> context = canvas.getContext(<span class="string">&quot;2d&quot;</span>);</span><br><span class="line">    <span class="comment">// 创建新的图片对象</span></span><br><span class="line">    <span class="keyword">let</span> img = <span class="keyword">new</span> Image();</span><br><span class="line">    <span class="comment">// 指定图片的DataURL(图片的base64编码数据)</span></span><br><span class="line">    img.src = file.content;</span><br><span class="line">    <span class="comment">// 监听浏览器加载图片完成，然后进行进行绘制</span></span><br><span class="line">    img.onload = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 指定canvas画布大小，该大小为最后生成图片的大小</span></span><br><span class="line">    canvas.width = <span class="number">500</span>;</span><br><span class="line">    canvas.height = (img.height / img.width) * <span class="number">500</span>;</span><br><span class="line">    <span class="comment">/* drawImage画布绘制的方法。(0,0)表示以Canvas画布左上角为起点，400，300是将图片按给定的像素进行缩小。</span></span><br><span class="line"><span class="comment">	如果不指定缩小的像素图片将以图片原始大小进行绘制，图片像素如果大于画布将会从左上角开始按画布大小部分绘制图片，最后的图片就是张局部图。*/</span></span><br><span class="line">    context.drawImage(img, <span class="number">0</span>, <span class="number">0</span>,<span class="number">500</span>,(img.height / img.width) * <span class="number">500</span>);</span><br><span class="line">    <span class="comment">// 将绘制完成的图片重新转化为base64编码，file.file.type为图片类型，0.92为默认压缩质量</span></span><br><span class="line">    file.content = canvas.toDataURL(file.file.type, <span class="number">0.92</span>);</span><br><span class="line">    <span class="comment">// 压缩后的base64</span></span><br><span class="line">    <span class="built_in">console</span>.log(file.content);</span><br><span class="line">    <span class="keyword">return</span> file.content</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CH">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/12/%E4%BC%A0%E5%A5%87%E7%A7%81%E6%9C%8D%E6%9E%B6%E8%AE%BE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -437,7 +531,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -450,7 +544,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
